@@ -20,6 +20,10 @@
 
 #define SRC_MAIN_SCHEDULER_C_
 
+#ifdef USE_SERIAL_OSD
+#include "io/serial_osd.h"
+#endif
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>

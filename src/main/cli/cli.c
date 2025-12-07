@@ -173,6 +173,11 @@ bool cliMode = false;
 
 #include "cli.h"
 
+#ifdef USE_SERIAL_OSD
+#include "io/serial_osd.h"
+#include "pg/pg_serial_osd.h"
+#endif
+
 static serialPort_t *cliPort = NULL;
 static bool cliInteractive = false;
 static timeMs_t cliEntryTime = 0;
@@ -6540,6 +6545,43 @@ typedef struct {
 
 static void cliHelp(const char *cmdName, char *cmdline);
 
+#ifdef USE_SERIAL_OSD
+static void cliSerialOsd(const char *cmdName, char *cmdline)
+{
+    
+    UNUSED(cmdName);
+    
+    if (isEmpty(cmdline)) {
+        cliPrintf("Serial OSD Status:\r\n");
+        cliPrintf("  Selected Port: UART%d\r\n", getSerialOsdSelectedPort());
+        cliPrintf("  Port Configured: %s\r\n", isSerialOsdPortConfigured() ? "YES" : "NO");
+        cliPrintf("  Port Open: %s\r\n", isSerialOsdPortOpen() ? "YES" : "NO");
+        cliPrintf("  Current Message: %s\r\n", getSerialOsdMessage());
+        cliPrintf("\r\nUsage: serial_osd <port>\r\n");
+        cliPrintf("  port: 1-8 for UART1-8, 0 to disable\r\n");
+        return;
+    }
+    
+    int port = atoi(cmdline);
+    if (port < 0 || port > 8) {
+        cliPrintf("Error: Port must be 0-8\r\n");
+        return;
+    }
+    
+    serialOsdConfig_t *config = serialOsdConfigMutable();
+    config->selected_port = port;
+    
+    if (port == 0) {
+        cliPrintf("Serial OSD disabled\r\n");
+    } else {
+        cliPrintf("Serial OSD set to UART%d\r\n", port);
+    }
+    
+    // Reinitialize
+    initSerialOsd();
+}
+#endif
+
 // should be sorted a..z for bsearch()
 const clicmd_t cmdTable[] = {
     CLI_COMMAND_DEF("adjrange", "configure adjustment ranges", "<index> <unused> <range channel> <start> <end> <function> <select channel> [<center> <scale>]", cliAdjustmentRange),
@@ -6696,6 +6738,9 @@ const clicmd_t cmdTable[] = {
 #ifdef USE_VTX_TABLE
     CLI_COMMAND_DEF("vtx_info", "vtx power config dump", NULL, cliVtxInfo),
     CLI_COMMAND_DEF("vtxtable", "vtx frequency table", "<band> <bandname> <bandletter> [FACTORY|CUSTOM] <freq> ... <freq>\r\n", cliVtxTable),
+#endif
+#ifdef USE_SERIAL_OSD
+    CLI_COMMAND_DEF("serial_osd", "configure serial OSD port", "<port>", cliSerialOsd),
 #endif
 };
 

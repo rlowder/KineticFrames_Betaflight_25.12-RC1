@@ -111,6 +111,10 @@
 #include "io/usb_cdc_hid.h"
 #endif
 
+#ifdef USE_SERIAL_OSD
+#include "io/serial_osd.h"
+#endif
+
 #include "tasks.h"
 
 // taskUpdateRxMain() has occasional peaks in execution time so normal moving average duration estimation doesn't work
@@ -381,6 +385,10 @@ task_attribute_t task_attributes[TASK_COUNT] = {
     [TASK_RX] = DEFINE_TASK("RX", NULL, rxUpdateCheck, taskUpdateRxMain, TASK_PERIOD_HZ(33), TASK_PRIORITY_HIGH), // If event-based scheduling doesn't work, fallback to periodic scheduling
     [TASK_DISPATCH] = DEFINE_TASK("DISPATCH", NULL, NULL, dispatchProcess, TASK_PERIOD_HZ(1000), TASK_PRIORITY_HIGH),
 
+#ifdef USE_SERIAL_OSD
+    [TASK_SERIAL_OSD] = DEFINE_TASK("SERIAL_OSD", NULL, NULL, processSerialOsd, TASK_PERIOD_HZ(10), TASK_PRIORITY_LOWEST),
+#endif
+
 #ifdef USE_BEEPER
     [TASK_BEEPER] = DEFINE_TASK("BEEPER", NULL, NULL, beeperUpdate, TASK_PERIOD_HZ(100), TASK_PRIORITY_LOW),
 #endif
@@ -554,6 +562,10 @@ void tasksInit(void)
     setTaskEnabled(TASK_RX, true);
 
     setTaskEnabled(TASK_DISPATCH, dispatchIsEnabled());
+
+#ifdef USE_SERIAL_OSD
+    setTaskEnabled(TASK_SERIAL_OSD, true);
+#endif
 
 #ifdef USE_BEEPER
     setTaskEnabled(TASK_BEEPER, true);

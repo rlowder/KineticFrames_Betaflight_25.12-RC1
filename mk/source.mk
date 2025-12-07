@@ -25,6 +25,7 @@ PG_SRC = \
             pg/motor.c \
             pg/msp.c \
             pg/pg.c \
+            pg/pg_serial_osd.c \
             pg/pilot.c \
             pg/piniobox.c \
             pg/pinio.c \
@@ -125,6 +126,7 @@ COMMON_SRC = \
             io/beeper.c \
             io/piniobox.c \
             io/serial.c \
+            io/serial_osd.c \
             io/serial_resource.c \
             io/smartaudio_protocol.c \
             io/statusindicator.c \
