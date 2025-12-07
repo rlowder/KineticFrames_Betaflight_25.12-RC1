@@ -162,6 +162,10 @@
 #include "osd/osd_elements.h"
 #include "osd/osd_warnings.h"
 
+#ifdef USE_SERIAL_OSD
+#include "io/serial_osd.h"
+#endif
+
 #include "pg/motor.h"
 #include "pg/pilot.h"
 #include "pg/stats.h"
@@ -839,6 +843,25 @@ static void osdElementCompassBar(osdElementParms_t *element)
     memcpy(element->buff, compassBar + osdGetHeadingIntoDiscreteDirections(DECIDEGREES_TO_DEGREES(attitude.values.yaw), 16), 9);
     element->buff[9] = 0;
 }
+
+#ifdef USE_SERIAL_OSD
+// Display message from serial OSD
+static void osdElementSerialMsg(osdElementParms_t *element)
+{
+    if (!isSerialOsdPortConfigured()) {
+        tfp_sprintf(element->buff, "SERIAL OSD OFF");
+        return;
+    }
+    
+    const char* serialMsg = getSerialOsdMessage();
+    if (serialMsg && serialMsg[0] != '\0') {
+        strncpy(element->buff, serialMsg, OSD_ELEMENT_BUFFER_LENGTH - 1);
+        element->buff[OSD_ELEMENT_BUFFER_LENGTH - 1] = '\0';
+    } else {
+        tfp_sprintf(element->buff, "NO SERIAL DATA");
+    }
+}
+#endif
 
 //display custom message from MSPv2
 static void osdElementCustomMsg(osdElementParms_t *element)
@@ -1941,6 +1964,9 @@ static const uint8_t osdElementDisplayOrder[] = {
 #ifdef USE_RANGEFINDER
     OSD_LIDAR_DIST,
 #endif
+#ifdef USE_SERIAL_OSD
+    OSD_SERIAL_MSG,
+#endif
 };
 
 // Define the mapping between the OSD element id and the function to draw it
@@ -2087,6 +2113,9 @@ const osdElementDrawFn osdElementDrawFunction[OSD_ITEM_COUNT] = {
 #endif
 #ifdef USE_RANGEFINDER
     [OSD_LIDAR_DIST]              = osdElementLidarDist,
+#endif
+#ifdef USE_SERIAL_OSD
+    [OSD_SERIAL_MSG]              = osdElementSerialMsg,
 #endif
 };
 

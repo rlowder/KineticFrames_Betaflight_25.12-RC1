@@ -29,10 +29,6 @@
 
 #include "sensors/esc_sensor.h"
 
-#ifdef USE_SERIAL_OSD
-#include "io/serial_osd.h"
-#endif
-
 #define OSD_NUM_TIMER_TYPES 5
 extern const char * const osdTimerSourceNames[OSD_NUM_TIMER_TYPES];
 
@@ -199,6 +195,7 @@ typedef enum {
     OSD_CUSTOM_MSG2,
     OSD_CUSTOM_MSG3,
     OSD_LIDAR_DIST,
+    OSD_SERIAL_MSG,
     OSD_ITEM_COUNT // MUST BE LAST
 } osd_items_e;
 
