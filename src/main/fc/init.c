@@ -175,6 +175,10 @@
 
 #include "telemetry/telemetry.h"
 
+#ifdef USE_SERIAL_OSD
+#include "io/serial_osd.h"
+#endif
+
 #ifdef USE_HARDWARE_REVISION_DETECTION
 #include "hardware_revision.h"
 #endif
@@ -934,6 +938,10 @@ void init(void)
         }
     }
 #endif // USE_OSD
+
+#ifdef USE_SERIAL_OSD
+    initSerialOsd();
+#endif
 
 #if defined(USE_CMS) && defined(USE_MSP_DISPLAYPORT)
     // If BFOSD is not active, then register MSP_DISPLAYPORT as a CMS device.

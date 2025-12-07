@@ -159,7 +159,9 @@
 //#define PG_SOFTSERIAL_PIN_CONFIG    558  // removed, merged into SERIAL_PIN_CONFIG
 #define PG_GIMBAL_TRACK_CONFIG      559
 #define PG_OPTICALFLOW_CONFIG       560
-
+#ifdef USE_SERIAL_OSD
+#define PG_SERIAL_OSD_CONFIG        561
+#endif
 
 // OSD configuration (subject to change)
 #define PG_OSD_FONT_CONFIG 2047

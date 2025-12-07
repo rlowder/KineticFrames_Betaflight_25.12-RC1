@@ -29,6 +29,10 @@
 
 #include "sensors/esc_sensor.h"
 
+#ifdef USE_SERIAL_OSD
+#include "io/serial_osd.h"
+#endif
+
 #define OSD_NUM_TIMER_TYPES 5
 extern const char * const osdTimerSourceNames[OSD_NUM_TIMER_TYPES];
 

@@ -1502,6 +1502,13 @@ void osdUpdate(timeUs_t currentTimeUs)
             // for drawing the elements including their backgrounds.
             displayClearScreen(osdDisplayPort, DISPLAY_CLEAR_NONE);
         }
+    
+    #ifdef USE_SERIAL_OSD
+        if (isSerialOsdMessageValid(currentTimeUs)) {
+            const char *message = getSerialOsdMessage();
+            displayWrite(osdDisplayPort, 10, 1, DISPLAYPORT_SEVERITY_NORMAL, message);
+        }
+    #endif
 
 #ifdef USE_GPS
         static bool lastGpsSensorState;
